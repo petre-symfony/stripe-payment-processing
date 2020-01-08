@@ -8,6 +8,7 @@ use App\Entity\Product;
 use App\Store\ShoppingCart;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class OrderController extends AbstractController {
@@ -35,8 +36,12 @@ class OrderController extends AbstractController {
    * @Route("/checkout", name="order_checkout")
    * @IsGranted("ROLE_USER")
    */
-  public function checkoutAction(){
+  public function checkoutAction(Request $request){
     $products = $this->cart->getProducts();
+
+    if($request->isMethod('POST')){
+			dump($request->get('stripeToken'));
+    }
 
     return $this->render('order/checkout.html.twig', array(
       'products' => $products,
