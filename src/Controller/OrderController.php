@@ -54,6 +54,7 @@ class OrderController extends AbstractController {
 			    'source' => $token
 		    ]);
 		    $user->setStripeCustomerId($customer->id);
+		    
 		    $em->persist($user);
 		    $em->flush();
 	    } else {
@@ -62,17 +63,20 @@ class OrderController extends AbstractController {
 		    $customer->save();
 	    }
 
-	    \Stripe\InvoiceItem::create([
-		    'amount' => $this->cart->getTotal() * 100,
-		    'currency' => 'usd',
-		    'customer' => $user->getStripeCustomerId(),
-		    'description' => '"First test charge!',
-	    ]);
+	    foreach ($products as $product) {
+		    \Stripe\InvoiceItem::create([
+			    'amount' => $product->getPrice() * 100,
+			    'currency' => 'usd',
+			    'customer' => $user->getStripeCustomerId(),
+			    'description' => $product->getName()
+		    ]);
+	    }
+
 	    $invoice = \Stripe\Invoice::create([
 		    'customer' => $user->getStripeCustomerId()
 	    ]);
 	    $invoice->pay();
-	    
+
 	    $this->cart->emptyCart();
 	    $this->addFlash('success', 'Order Complete! Yay!');
 
