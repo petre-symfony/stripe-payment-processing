@@ -62,13 +62,17 @@ class OrderController extends AbstractController {
 		    $customer->save();
 	    }
 
-	    \Stripe\Charge::create([
+	    \Stripe\InvoiceItem::create([
 		    'amount' => $this->cart->getTotal() * 100,
 		    'currency' => 'usd',
 		    'customer' => $user->getStripeCustomerId(),
 		    'description' => '"First test charge!',
 	    ]);
-
+	    $invoice = \Stripe\Invoice::create([
+		    'customer' => $user->getStripeCustomerId()
+	    ]);
+	    $invoice->pay();
+	    
 	    $this->cart->emptyCart();
 	    $this->addFlash('success', 'Order Complete! Yay!');
 
