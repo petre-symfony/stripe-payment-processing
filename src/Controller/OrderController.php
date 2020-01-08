@@ -65,7 +65,7 @@ class OrderController extends AbstractController {
 	    \Stripe\Charge::create([
 		    'amount' => $this->cart->getTotal() * 100,
 		    'currency' => 'usd',
-		    'source' => $token,
+		    'customer' => $user->getStripeCustomerId(),
 		    'description' => '"First test charge!',
 	    ]);
 
