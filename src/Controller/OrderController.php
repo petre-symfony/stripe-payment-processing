@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Store\ShoppingCart;
+use App\Stripe\StripeClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,7 +39,7 @@ class OrderController extends AbstractController {
    * @Route("/checkout", name="order_checkout")
    * @IsGranted("ROLE_USER")
    */
-  public function checkoutAction(Request $request, EntityManagerInterface $em){
+  public function checkoutAction(Request $request, StripeClient $stripeClient){
     $products = $this->cart->getProducts();
 
     if($request->isMethod('POST')){
@@ -49,14 +50,7 @@ class OrderController extends AbstractController {
 	    /** @var User $user*/
 	    $user = $this->getUser();
 	    if (!$user->getStripeCustomerId()){
-		    $customer = \Stripe\Customer::create([
-			    'email' => $user->getEmail(),
-			    'source' => $token
-		    ]);
-		    $user->setStripeCustomerId($customer->id);
-		    
-		    $em->persist($user);
-		    $em->flush();
+		    $stripeClient->createCustomer($user, $token);
 	    } else {
 		    $customer = \Stripe\Customer::retrieve($user->getStripeCustomerId());
 		    $customer->source = $token;
