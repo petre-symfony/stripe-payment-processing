@@ -8,7 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 class StripeClient {
 	private $em;
 
-	public function __construct(EntityManagerInterface $em) {
+	public function __construct(string $stripeSecretKey,EntityManagerInterface $em) {
+		\Stripe\Stripe::setApiKey($stripeSecretKey);
 		$this->em = $em;
 	}
 
