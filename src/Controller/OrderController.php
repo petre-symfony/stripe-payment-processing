@@ -72,7 +72,7 @@ class OrderController extends AbstractController {
     return $this->render('order/checkout.html.twig', array(
       'products' => $products,
       'cart' => $this->cart,
-	    'stripe_key' => $this->getParameter('stripe_public_key')
+	    'stripe_public_key' => $this->getParameter('stripe_public_key')
     ));
 
   }
