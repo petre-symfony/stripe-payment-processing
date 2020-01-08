@@ -54,12 +54,11 @@ class OrderController extends AbstractController {
 	    }
 
 	    foreach ($products as $product) {
-		    \Stripe\InvoiceItem::create([
-			    'amount' => $product->getPrice() * 100,
-			    'currency' => 'usd',
-			    'customer' => $user->getStripeCustomerId(),
-			    'description' => $product->getName()
-		    ]);
+		    $stripeClient->createInvoiceItem(
+			    $product->getPrice()*100,
+			    $user,
+			    $product->getDescription()
+		    );
 	    }
 
 	    $invoice = \Stripe\Invoice::create([
