@@ -37,10 +37,10 @@
             <script
                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                 data-key="{{ stripe_key }}"
-                data-amount="999"
+                data-amount="{{ cart.total * 100 }}"
                 data-name="Dollar Shear Club"
                 data-description="Widget"
-                data-image="/img/documentation/checkout/marketplace.png"
+                data-image="{{ asset('images/logo.png') }}"
                 data-locale="auto">
             </script>
           </form>
