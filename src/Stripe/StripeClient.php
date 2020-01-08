@@ -24,4 +24,10 @@ class StripeClient {
 
 		return $customer;
 	}
+
+	public function updateCustomerCard(User $user, $paymentToken){
+		$customer = \Stripe\Customer::retrieve($user->getStripeCustomerId());
+		$customer->source = $paymentToken;
+		$customer->save();
+	}
 }

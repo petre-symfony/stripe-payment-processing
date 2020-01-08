@@ -52,9 +52,7 @@ class OrderController extends AbstractController {
 	    if (!$user->getStripeCustomerId()){
 		    $stripeClient->createCustomer($user, $token);
 	    } else {
-		    $customer = \Stripe\Customer::retrieve($user->getStripeCustomerId());
-		    $customer->source = $token;
-		    $customer->save();
+		    $stripeClient->updateCustomerCard($user, $token);
 	    }
 
 	    foreach ($products as $product) {
