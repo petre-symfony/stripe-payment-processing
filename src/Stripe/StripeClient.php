@@ -40,4 +40,16 @@ class StripeClient {
 			'description' => $description
 		]);
 	}
+
+	public function createInvoice(User $user, $payImmediately=true){
+		$invoice = \Stripe\Invoice::create([
+			'customer' => $user->getStripeCustomerId()
+		]);
+
+		if($payImmediately) {
+			$invoice->pay();
+		}
+
+		return $invoice;
+	}
 }

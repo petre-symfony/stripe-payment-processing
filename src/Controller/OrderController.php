@@ -61,10 +61,7 @@ class OrderController extends AbstractController {
 		    );
 	    }
 
-	    $invoice = \Stripe\Invoice::create([
-		    'customer' => $user->getStripeCustomerId()
-	    ]);
-	    $invoice->pay();
+	    $stripeClient->createInvoice($user, true);
 
 	    $this->cart->emptyCart();
 	    $this->addFlash('success', 'Order Complete! Yay!');
