@@ -21,7 +21,12 @@ class User implements UserInterface {
    */
   private $email;
 
-  /**
+	/**
+	 * @ORM\Column(type="string", unique=true, nullable=true)
+	 */
+	private $stripeCustomerId;
+
+	/**
    * @ORM\Column(type="json")
    */
   private $roles = [];
@@ -46,6 +51,20 @@ class User implements UserInterface {
     return $this;
   }
 
+	/**
+	 * @return mixed
+	 */
+	public function getStripeCustomerId(): ?string {
+		return $this->stripeCustomerId;
+	}
+	/**
+	 * @param mixed $stripeCustomerId
+	 */
+	public function setStripeCustomerId($stripeCustomerId): self {
+		$this->stripeCustomerId = $stripeCustomerId;
+		return $this;
+	}
+	
   /**
    * A visual identifier that represents this user.
    *
