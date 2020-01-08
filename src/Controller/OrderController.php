@@ -5,7 +5,9 @@ namespace App\Controller;
 
 
 use App\Entity\Product;
+use App\Entity\User;
 use App\Store\ShoppingCart;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,13 +38,28 @@ class OrderController extends AbstractController {
    * @Route("/checkout", name="order_checkout")
    * @IsGranted("ROLE_USER")
    */
-  public function checkoutAction(Request $request){
+  public function checkoutAction(Request $request, EntityManagerInterface $em){
     $products = $this->cart->getProducts();
 
     if($request->isMethod('POST')){
 			$token = $request->get('stripeToken');
 
 	    \Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
+
+	    /** @var User $user*/
+	    $user = $this->getUser();
+	    if (!$user->getStripeCustomerId()){
+		    $customer = \Stripe\Customer::create([
+			    'email' => $user->getEmail(),
+			    'source' => $token
+		    ]);
+		    $user->setStripeCustomerId($customer->id);
+		    $em->persist($user);
+		    $em->flush();
+	    } else {
+		    $customer = \Stripe\Customer::retrieve($user->getStripeCustomerId());
+	    }
+
 	    \Stripe\Charge::create([
 		    'amount' => $this->cart->getTotal() * 100,
 		    'currency' => 'usd',

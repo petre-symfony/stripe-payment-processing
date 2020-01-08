@@ -64,7 +64,7 @@ class User implements UserInterface {
 		$this->stripeCustomerId = $stripeCustomerId;
 		return $this;
 	}
-	
+
   /**
    * A visual identifier that represents this user.
    *
