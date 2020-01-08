@@ -40,7 +40,20 @@ class OrderController extends AbstractController {
     $products = $this->cart->getProducts();
 
     if($request->isMethod('POST')){
-			dump($request->get('stripeToken'));
+			$token = $request->get('stripeToken');
+
+	    \Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
+	    \Stripe\Charge::create([
+		    'amount' => $this->cart->getTotal() * 100,
+		    'currency' => 'usd',
+		    'source' => $token,
+		    'description' => '"First test charge!',
+	    ]);
+
+	    $this->cart->emptyCart();
+	    $this->addFlash('success', 'Order Complete! Yay!');
+
+	    return $this->redirectToRoute('homepage');
     }
 
     return $this->render('order/checkout.html.twig', array(
