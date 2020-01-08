@@ -58,6 +58,8 @@ class OrderController extends AbstractController {
 		    $em->flush();
 	    } else {
 		    $customer = \Stripe\Customer::retrieve($user->getStripeCustomerId());
+		    $customer->source = $token;
+		    $customer->save();
 	    }
 
 	    \Stripe\Charge::create([
